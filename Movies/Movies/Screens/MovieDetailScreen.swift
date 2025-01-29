@@ -21,7 +21,7 @@ struct MovieDetailScreen: View {
             TextField("Title", text: $title)
             TextField("Year", value: $year, format: .number)
             
-            Section{
+            Section("Reviews") {
                 Button {
                     showReviewScreen = true
                 } label: {
@@ -29,15 +29,12 @@ struct MovieDetailScreen: View {
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
                 
-                if let reviews = movie.reviews {
-                    if reviews.isEmpty {
-                        ContentUnavailableView {
-                            Text("No Reviews")
-                        }
+                if movie.reviews.isEmpty {
+                    ContentUnavailableView {
+                        Text("No Reviews")
                     }
-                    else {
-                        ReviewListView(reviews: reviews)
-                    }
+                } else {
+                    ReviewListView(movie: movie)
                 }
             }
         }
