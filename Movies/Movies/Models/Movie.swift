@@ -13,6 +13,9 @@ final class Movie {
     var title: String
     var year: Int
     
+    @Relationship(deleteRule: .cascade, inverse: \Review.movie) // .cascade means that if you delete movie it will delete all the reviews assosiated with that movie
+    var reviews: [Review]? = []
+    
     init(title: String, year: Int) {
         self.title = title
         self.year = year

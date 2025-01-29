@@ -14,11 +14,32 @@ struct MovieDetailScreen: View {
     let movie: Movie
     @State private var title: String = ""
     @State private var year: Int?
+    @State private var showReviewScreen = false
     
     var body: some View {
         Form {
             TextField("Title", text: $title)
             TextField("Year", value: $year, format: .number)
+            
+            Section{
+                Button {
+                    showReviewScreen = true
+                } label: {
+                    Image(systemName: "plus")
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                if let reviews = movie.reviews {
+                    if reviews.isEmpty {
+                        ContentUnavailableView {
+                            Text("No Reviews")
+                        }
+                    }
+                    else {
+                        Text("List of Reviews")
+                    }
+                }
+            }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -38,6 +59,11 @@ struct MovieDetailScreen: View {
         .onAppear {
             title = movie.title
             year = movie.year
+        }
+        .sheet(isPresented: $showReviewScreen) {
+            NavigationStack {
+                AddReviewScreen(movie: movie)
+            }
         }
     }
 }
