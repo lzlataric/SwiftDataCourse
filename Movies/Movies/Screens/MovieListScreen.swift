@@ -8,13 +8,24 @@
 import SwiftUI
 import SwiftData
 
+enum Sheets: Identifiable {
+    case addMovie
+    case addActor
+    case showFilters
+    
+    var id: Int {
+        hashValue
+    }
+}
+
 struct MovieListScreen: View {
     @Environment(\.modelContext) private var context
+    //    @Query(filter: #Predicate<Movie> { $0.year > 2001 && $0.actors.count > 1 }) private var movies: [Movie]
     @Query(sort: \Movie.title, order: .forward) private var movies: [Movie]
     @Query(sort: \MovieActor.name, order: .forward) private var actors: [MovieActor]
-    @State private var isAddMoviePresented: Bool = false
-    @State private var isAddActorPresented: Bool = false
     @State private var actorName = ""
+    
+    @State private var activeSheet: Sheets?
     
     private func saveActor() {
         let actor = MovieActor(name: actorName)
@@ -35,22 +46,39 @@ struct MovieListScreen: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Add Movie") {
-                    isAddMoviePresented = true
+                    activeSheet = .addMovie
                 }
             }
             
             ToolbarItem(placement: .topBarLeading) {
                 Button("Add Actor") {
-                    isAddActorPresented = true
+                    activeSheet = .addActor
                 }
             }
         }
-        .sheet(isPresented: $isAddMoviePresented) {
-            NavigationStack {
-                AddMovieScreen()
+        .sheet(item: $activeSheet, content: { activeSheet in
+            switch activeSheet {
+            case .addMovie:
+                addMovieSheet
+            case .addActor:
+                addActorSheet
+                EmptyView()
+            case .showFilters:
+                Text("Show Filter")
             }
+        })
+    }
+}
+
+extension MovieListScreen {
+    var addMovieSheet: some View {
+        NavigationStack {
+            AddMovieScreen()
         }
-        .sheet(isPresented: $isAddActorPresented) {
+    }
+    
+    var addActorSheet: some View {
+        VStack {
             Text("Add Actor")
                 .font(.largeTitle)
                 .presentationDetents([.fraction(0.25)])
@@ -61,11 +89,10 @@ struct MovieListScreen: View {
                 .padding()
             
             Button("Save") {
-                isAddActorPresented = false
                 saveActor()
+                activeSheet = nil
             }
         }
-        
     }
 }
 
