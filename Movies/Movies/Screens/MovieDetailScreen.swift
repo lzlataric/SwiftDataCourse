@@ -37,6 +37,18 @@ struct MovieDetailScreen: View {
                     ReviewListView(movie: movie)
                 }
             }
+            
+            Section("Actors") {
+                if movie.actors.isEmpty {
+                    ContentUnavailableView {
+                        Text("No Actors Available")
+                    }
+                } else {
+                    List(movie.actors) { actor in
+                        ActorCellView(actor: actor)
+                    }
+                }
+            }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

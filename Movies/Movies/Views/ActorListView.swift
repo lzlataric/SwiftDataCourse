@@ -11,7 +11,12 @@ struct ActorListView: View {
     let actors: [MovieActor]
     var body: some View {
         List(actors) { actor in
-            Text(actor.name)
+            NavigationLink(value: actor) {
+                ActorCellView(actor: actor)
+            }
+        }
+        .navigationDestination(for: MovieActor.self) { actor in
+            ActorDetailScreen(actor: actor)
         }
     }
 }
