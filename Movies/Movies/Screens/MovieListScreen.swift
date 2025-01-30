@@ -24,8 +24,8 @@ struct MovieListScreen: View {
     @Query(sort: \Movie.title, order: .forward) private var movies: [Movie]
     @Query(sort: \MovieActor.name, order: .forward) private var actors: [MovieActor]
     @State private var actorName = ""
-    
     @State private var activeSheet: Sheets?
+    @State private var filterOption: FilterOption = .none
     
     private func saveActor() {
         let actor = MovieActor(name: actorName)
@@ -34,9 +34,16 @@ struct MovieListScreen: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Movies")
-                .font(.largeTitle)
-            MovieListView(movies: movies)
+            HStack(alignment: .firstTextBaseline) {
+                Text("Movies")
+                    .font(.largeTitle)
+                Spacer()
+                Button("Filter"){
+                    activeSheet = .showFilters
+                }
+            }
+            
+            MovieListView(filterOption: filterOption)
             
             Text("Actors")
                 .font(.largeTitle)
@@ -64,7 +71,7 @@ struct MovieListScreen: View {
                 addActorSheet
                 EmptyView()
             case .showFilters:
-                Text("Show Filter")
+                FilterSelectionScreen(filterOption: $filterOption)
             }
         })
     }
