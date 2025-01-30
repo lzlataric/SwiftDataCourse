@@ -20,6 +20,10 @@ struct MovieListView: View {
             break
         case .movieTitle(let movieTitle):
             _movies = Query(filter: #Predicate { $0.title.contains(movieTitle) })
+        case .reviewsCount(let numberOfReviews):
+            _movies = Query(filter: #Predicate { $0.reviews.count >= numberOfReviews })
+        case .actorsCount(let numberOfActors):
+            _movies = Query(filter: #Predicate { $0.actors.count >= numberOfActors })
         }
     }
     
@@ -39,8 +43,14 @@ struct MovieListView: View {
         List {
             ForEach(movies) { movie in
                 NavigationLink(value: movie) {
-                    HStack {
-                        Text(movie.title)
+                    HStack(alignment: .firstTextBaseline) {
+                        VStack(alignment: .leading) {
+                            Text(movie.title)
+                            Text("Reviews count: \(movie.reviewsCount)")
+                                .font(.caption)
+                            Text("Actors count: \(movie.actorsCount)")
+                                .font(.caption)
+                        }
                         Spacer()
                         Text(movie.year.description)
                     }
